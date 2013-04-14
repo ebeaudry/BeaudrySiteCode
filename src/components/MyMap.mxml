@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" paddingLeft="10">
+		<mx:Script>
+			<![CDATA[
+				import beans.ExcursionBean;
+				import beans.LocationBean;
+				import beans.LocationsBean;
+				import retrievers.RetrieveLocations;
+				import mx.events.CloseEvent;
+				import mx.core.EdgeMetrics;
+				import mx.controls.Label;
+				import mx.controls.Alert;
+				import mx.rpc.events.FaultEvent;
+				import mx.rpc.events.ResultEvent;
+				import com.google.maps.interfaces.IInfoWindow;
+				import com.google.maps.Color;
+				import com.google.maps.MapMouseEvent;
+				import com.google.maps.InfoWindowOptions;
+				import com.google.maps.overlays.MarkerOptions;
+				import com.google.maps.overlays.Marker;
+				import com.google.maps.controls.NavigationControl;
+				import com.google.maps.controls.ControlPosition;
+				import com.google.maps.controls.OverviewMapControl;
+				import com.google.maps.Map3D;
+				import com.google.maps.controls.MapTypeControl;
+				import com.google.maps.LatLng;
+			    import com.google.maps.Map;
+			    import com.google.maps.MapEvent;
+			    import com.google.maps.MapType;
+			
+				private var locationData:LocationsBean = new LocationsBean;
+				private var markerCollection:Array = [];
+				
+				private function handleRetrieve(event:Event):void
+				{
+					for each(var location:LocationBean in locationData.locations)
+					{
+						this.createMarker(location);
+					}
+			     					
+				}
+				
+				private function onMapReady(event:Event):void
+				{					
+					this.map.setCenter(new LatLng(0, 0), 2, MapType.HYBRID_MAP_TYPE);
+					this.map.enableScrollWheelZoom();
+					this.map.enableContinuousZoom();				
+			        this.map.addControl(new MapTypeControl());
+			        this.map.addControl(new NavigationControl());			  	        
+			        var overviewMapControl:OverviewMapControl = new OverviewMapControl();
+			        overviewMapControl.setControlPosition(new ControlPosition(ControlPosition.ANCHOR_BOTTOM_RIGHT, 0, 0));			        
+			        this.map.addControl(overviewMapControl);
+					var retrieve:RetrieveLocations = new RetrieveLocations(locationData, handleRetrieve);	
+					retrieve.retrieveAllLocations();
+				}
+				
+				private function createMarker(location:LocationBean):void
+				{
+					var marker:Marker;
+					var markerOptions:MarkerOptions = MarkerOptions.getDefaultOptions();
+					var locationCoordinates:LatLng = new LatLng(location.lat, location.lng);
+					markerOptions.tooltip = location.place;
+					marker = new Marker(locationCoordinates);
+					marker.setOptions(markerOptions);	
+					marker.addEventListener(MapMouseEvent.CLICK, function(e:MapMouseEvent):void
+					{
+						var displayText:InfoWindowBeaudry = new InfoWindowBeaudry();
+						var linkLabel:Label;
+						displayText.addLocation(location.place);
+						displayText.place = location.place;
+						for each( var excursion:ExcursionBean in location.excursions)
+						{
+							displayText.addExcursion(excursion);
+						}
+			            var infoWindow:InfoWindowOptions = new InfoWindowOptions({hasShadow: true, customContent: displayText});
+			            var iInfoWindow:IInfoWindow;		
+			            infoWindow.cornerRadius = 40; 		            
+              			iInfoWindow = marker.openInfoWindow(infoWindow, true);             								
+						displayText.addEventListener(CloseEvent.CLOSE, function(event:Event):void
+						{
+							marker.closeInfoWindow()
+						});
+					});
+					this.map.addOverlay(marker);
+				}
+											
+				private function addLink(contents:String, When:String, site:String):String
+				{
+					contents = contents +  "<a href=\"" + site + "\" target=\"site\">" + When + "</a><br/>";
+					return contents;
+				}
+								
+			]]>
+		</mx:Script>
+		<mx:Label text="Where We Have Been" fontSize="30" color="#000000" width="100%" fontFamily="Verdana" fontWeight="bold" textAlign="center"/>
+	<maps:Map xmlns:maps="com.google.maps.*" 		
+		id="map" addedEffect="{wipeTheMap}"
+		mapevent_mapready="onMapReady(event)" 
+		width="1000" height="600" x="0" y="51"/>
+		<mx:WipeLeft id="wipeTheMap" duration="1000" />
+		<mx:Fade id="fadeIn" alphaFrom="0.0" alphaTo="1.0" duration="1000"/>
+</mx:VBox>
+

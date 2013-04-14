@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" 
+	showCloseButton="true" remove="{this.removeAllChildren();}" 
+	width="{Application.application.width}" height="{Application.application.height}" 
+	xmlns:components="components.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Image;
+			import mx.core.Application;
+			import mx.effects.easing.Cubic;
+			import beans.FlickrPicture;
+			import mx.collections.ArrayCollection;
+		
+			[Bindable]
+			public var pictureList:ArrayCollection;		
+								
+			[Bindable]
+			public var currentPicture:FlickrPicture;
+			
+			private function setCurrentPic(event:Event):void
+			{
+				currentPicture = event.currentTarget.selectedItem;		
+			}
+			
+		]]>
+	</mx:Script>
+	<components:PicDisplayArea id="pictureViewer" pictureList="{pictureList}" currentPicture="{currentPicture}" height="100%" width="100%" visible="true" includeInLayout="true"/>
+</mx:TitleWindow>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<actionScriptProperties mainApplicationPath="BeaudrySite.mxml" version="3">
+  <compiler additionalCompilerArguments="-locale en_US" copyDependentFiles="true" enableModuleDebug="false" flexSDK="Flex 3.6A" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.124" htmlPlayerVersionCheck="true" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
+    <compilerSourcePath>
+      <compilerSourcePathEntry kind="1" linkType="1" path="C:/Google SDK/docs"/>
+    </compilerSourcePath>
+    <libraryPath defaultLinkType="1">
+      <libraryPathEntry kind="4" path=""/>
+      <libraryPathEntry kind="1" linkType="1" path="libs"/>
+      <libraryPathEntry kind="3" linkType="1" path="C:/Google SDK/lib/map_flex_1_22.swc" useDefaultLinkType="false"/>
+    </libraryPath>
+    <sourceAttachmentPath/>
+  </compiler>
+  <applications>
+    <application path="BeaudrySite.mxml"/>
+  </applications>
+  <modules>
+    <module destPath="modules/MainPage.swf" optimize="false" sourcePath="src/modules/MainPage.mxml"/>
+    <module application="src/BeaudrySite.mxml" destPath="modules/PictureViewer.swf" optimize="true" sourcePath="src/modules/PictureViewer.mxml"/>
+    <module application="src/BeaudrySite.mxml" destPath="modules/BeaudryImagesLoader.swf" optimize="true" sourcePath="src/modules/BeaudryImagesLoader.mxml"/>
+  </modules>
+  <buildCSSFiles/>
+</actionScriptProperties>

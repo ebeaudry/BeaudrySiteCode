@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+	visible="true" includeInLayout="true" creationComplete="init(event)"
+	xmlns:components="components.*">
+		<mx:Script>
+		<![CDATA[
+			import mx.core.Application;
+			import mx.controls.ProgressBar;
+			import mx.controls.Image;
+			import controller.ImagesController;
+			import mx.collections.ArrayCollection;
+			import beans.FlickrPicture;
+			import mx.managers.PopUpManager;
+			import mx.events.CloseEvent;
+			[Bindable]
+			public var pictureList:ArrayCollection;	
+			
+			[Bindable]
+			public var currentPicture:FlickrPicture;
+			
+			private function setCurrentPic(event:Event):void
+			{
+				if(event.currentTarget.selectedItem != siteImages.currentPicture)
+				{
+					picList.removeEventListener(MouseEvent.CLICK, setCurrentPic);
+					currentPicture = event.currentTarget.selectedItem;		
+					//siteImages.setPic(event.currentTarget.selectedItem);
+				}
+			}
+			
+			private function init(event:Event):void
+			{
+				picList.addEventListener(MouseEvent.CLICK, setCurrentPic);
+				siteImages.addEventListener("NewPicLoaded", reAddEventListener);
+			}
+			
+			private function reAddEventListener(event:Event):void
+			{
+				picList.addEventListener(MouseEvent.CLICK, setCurrentPic);				
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:HorizontalList id="picList" width="100%" borderStyle="none" height="150" dataProvider="{pictureList}" wordWrap="false">
+			<mx:itemRenderer>
+				<mx:Component>
+					<mx:HBox borderStyle="solid" borderThickness="7" width="130" height="130" 
+						horizontalAlign="center" verticalAlign="middle"
+						paddingBottom="5"
+						paddingLeft="5"
+						paddingRight="5"
+						paddingTop="5">
+							<mx:Image source="{data.thumbnailLink}" height="{Number(data.thumbnailHeight)}" scaleContent="true" width="{Number(data.thumbnailWidth)}" horizontalAlign="center" verticalAlign="middle" />
+					</mx:HBox>
+				</mx:Component>				
+			</mx:itemRenderer>		
+	</mx:HorizontalList>
+	<components:SiteImage id="siteImages" x="10" y="10" duration="500" currentPicture="{currentPicture}" />
+</mx:VBox>

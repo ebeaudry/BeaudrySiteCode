@@ -1,0 +1,9 @@
+@CHARSET "ISO-8859-1";
+
+TitleWindow
+{
+	borderColor: #333333;
+	color: #FFFFFF;
+	cornerRadius: 20;
+	roundedBottomCorners: true;
+}

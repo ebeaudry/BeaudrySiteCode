@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--	xmlns:comp="components.*"--> 
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	layout="absolute"
+	backgroundColor="#D2E7F4"
+	xmlns:local="*" xmlns:modules="modules.*" xmlns:display="flash.display.*" xmlns:components="components.*">
+	<mx:VBox>
+	<mx:Image width="1000"  source="images/header.gif"/>
+	<components:MyMap/>
+	</mx:VBox>
+</mx:Application>

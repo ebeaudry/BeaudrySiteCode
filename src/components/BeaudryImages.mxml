@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+	 <mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:components="components.*">	 	
+<mx:Script>
+	<![CDATA[
+		import controller.ImagesController;
+		import mx.core.IFlexDisplayObject;
+		import mx.managers.PopUpManager;
+		import mx.events.CloseEvent;
+		import beans.FlickrFeed;
+		import beans.FlickrPicture;
+		import mx.controls.ProgressBar;
+		import mx.containers.TitleWindow;
+		import mx.controls.Image;
+		import mx.utils.XMLUtil;
+		import mx.rpc.events.ResultEvent;
+		import mx.collections.ArrayCollection;
+		
+		[Bindable]
+		private var _pictureList:ArrayCollection;
+		
+		[Bindable]
+		public var linkName:String;
+		
+		private var _xmlList:XMLList;
+				
+		public function set pictureListURL(value:String):void
+		{
+			this.httpService.cancel();
+			var params:Object = new Object();
+			this.httpService.url = "http://api.flickr.com/services/rest/";
+			params.method = "flickr.photosets.getPhotos";
+			params.api_key = "026d488e715f659db10d9af826a6e14a";
+			// Secret key = 60e0e48293d96765
+			params.photoset_id = value;
+			params.extras = "url_t, url_s, url_m, url_o";
+			this.httpService.send(params);
+		}
+		
+		private function completeHandler(event:ResultEvent):void
+		{
+			var results:Object = event.result;
+			var myFeed:FlickrFeed = new FlickrFeed(results.rsp);
+		  	_pictureList = myFeed.entries;
+		}
+	]]>
+</mx:Script>
+			<mx:TileList id="tileList" dataProvider="{_pictureList}" height="264" width="410" borderStyle="none" borderThickness="7">
+				<mx:itemRenderer>
+					<mx:Component>
+						<mx:HBox borderStyle="solid" borderThickness="7" showEffect="fadeIn" width="130" height="130" 
+							horizontalAlign="center" verticalAlign="middle"
+							paddingBottom="5"
+							paddingLeft="5"
+							paddingRight="5"
+							paddingTop="5">
+							<components:BeaudrySiteImage source="{data.thumbnailLink}" height="{Number(data.thumbnailHeight)}" width="{Number(data.thumbnailWidth)}" scaleContent="true" horizontalAlign="center" verticalAlign="middle"/>
+						</mx:HBox>
+					</mx:Component>				
+				</mx:itemRenderer>
+			</mx:TileList>
+  <mx:HTTPService
+    id="httpService"
+    result="completeHandler( event )" />
+    <mx:Fade id="fadeIn" alphaFrom="0.0" alphaTo="1.0" duration="1000" />
+	<mx:Fade id="fadeOut" alphaFrom="1.0" alphaTo="0.0" duration="1000" />
+</mx:HBox>

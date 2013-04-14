@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300">
+		<mx:Script>
+		<![CDATA[
+			import flash.net.navigateToURL;
+			import components.webSite;
+			import mx.collections.XMLListCollection;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable]
+			private var placeData:XMLList
+			
+			[Bindable]
+			private var excursionData:XMLList;
+						
+			private function init():void
+			{
+				locations.send();
+			}
+			
+			public function retrieveLocations(event:ResultEvent):void
+			{ 
+				placeData = event.result.Location;
+			}
+			
+			public function retrieveExcursions(event:ResultEvent):void
+			{
+				excursionData = event.result.Excursion;
+				when.visible = excursionData.length() > 0;				
+			}
+			
+			public function handleFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString, "Faulty Towers");
+			}
+			
+			public function openWebsite():void
+			{
+				if(retrieveSite.request.Website != null)
+				{
+					navigateToURL(new URLRequest(retrieveSite.request.Website), "_site");
+				//	webSite.source =  retrieveSite.request.Website;
+				// 	retrieveSite.send();
+				} 	
+			}
+			public function loadSite(event:ResultEvent):void
+			{
+				
+				var result:String = event.result.Website as String;	
+				navigateToURL(new URLRequest(result), "_site");		
+			}
+			
+		]]>
+	</mx:Script>
+
+	<mx:HBox>
+		<mx:DataGrid id="city" dataProvider="{placeData}" click="excursions.send()" >
+			<mx:columns>
+				<mx:DataGridColumn headerText="City" dataField="Place"/>
+				<mx:DataGridColumn headerText="Latitude" dataField="Lat"/>
+				<mx:DataGridColumn headerText="Longitude" dataField="Lng"/>
+				<mx:DataGridColumn headerText="LocationID" dataField="LocationID" visible="false"/>
+			</mx:columns>
+		</mx:DataGrid>			
+		<mx:DataGrid id="when" dataProvider="{excursionData}" x="616" y="57" visible="false" click="openWebsite()">
+			<mx:columns>
+				<mx:DataGridColumn headerText="When" dataField="When" />
+				<mx:DataGridColumn headerText="Website" dataField="Website" visible="false"/>
+			</mx:columns>
+		</mx:DataGrid>			
+	</mx:HBox>
+	<mx:HTTPService id="locations"
+		url="http://www.edbeaudry.com/Locations.php"
+		result="retrieveLocations(event)"
+		resultFormat="e4x"
+		fault="handleFault(event)" >	
+	</mx:HTTPService>
+	<mx:HTTPService id="excursions"
+		url="http://www.edbeaudry.com/Excursions.php"
+		result="retrieveExcursions(event)"
+		resultFormat="e4x"
+		fault="handleFault(event)">
+		<mx:request>
+			<LocationID>
+				{city.selectedItem.LocationID}
+			</LocationID>
+		</mx:request>		
+	</mx:HTTPService>
+	<mx:HTTPService id="retrieveSite"
+		url="http://www.edbeaudry.com/LoadSite.php"
+		result="loadSite(event)"
+		resultFormat="text"
+		fault="handleFault(event)">
+		<mx:request>
+			<Website>
+				{when.selectedItem.Website}
+			</Website>
+		</mx:request>
+	</mx:HTTPService>
+
+</mx:Canvas>

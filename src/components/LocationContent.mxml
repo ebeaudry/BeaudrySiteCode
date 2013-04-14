@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" backgroundColor="#FFFFFF" 
+	paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"
+	width="100%" height="100%" effectEnd="endShow(event)"  addedEffect="{wipeDown}"
+	initialize="Init()" borderStyle="outset" cornerRadius="10" >
+<mx:Script>
+	<![CDATA[
+		import mx.controls.Text;
+		import beans.ExcursionBean;
+		import flash.net.navigateToURL;
+		import mx.controls.LinkButton;
+		import mx.controls.Label;
+		import mx.collections.ArrayCollection;
+		
+		private var _excursions:ArrayCollection = new ArrayCollection();
+		
+		[Bindable]
+		private var _place:String;
+		
+		public function set place(value:String):void
+		{
+			_place = value;
+		}
+		
+		public function get place():String
+		{
+			return _place;
+		}
+		
+		private function Init():void
+		{
+			
+		}
+		private function endShow(event:Event):void
+		{
+			for each( var dispObject:DisplayObject in this.getChildren())
+			{				
+				dispObject.visible = true;
+			}
+		}		
+		
+		public function addLocation(loc:String):void
+		{
+			var location:Text = new Text();
+			location.setStyle('fontFamily', 'Arial');
+			location.setStyle('fontSize', 14);
+			location.setStyle('showEffect', fadeIn);
+			location.setStyle('paddingBottom', 15); 
+			location.text = loc;
+			location.visible = false;
+			this.addChild(location);
+			
+		}
+		
+		public function addExcursion(excursion:ExcursionBean):void
+		{
+			if(excursion.website == null || excursion.website == "")
+			{
+				var label:Label = new Label();
+				label.setStyle('showEffect', fadeIn);
+				label.setStyle('paddingTop', 8); 
+				label.setStyle('paddingBottom', 8); 
+				label.visible = false;
+				label.text = excursion.when;
+				//_excursions.addItem(label);																		
+				this.addChild(label);
+			}
+			else
+			{
+				var labelLink:LinkButton = new LinkButton();
+				labelLink.data = excursion.website;
+				labelLink.setStyle('showEffect', fadeIn);
+				labelLink.setStyle('paddingTop', 8); 
+				labelLink.setStyle('paddingBottom', 8);
+				labelLink.label = excursion.when;
+				labelLink.visible = false;
+				labelLink.addEventListener(MouseEvent.CLICK, linkClicked);
+				//_excursions.addItem(labelLink);
+				this.addChild(labelLink);
+			}
+
+		} 		
+
+		private function linkClicked(event:MouseEvent):void
+		{
+			navigateToURL(new URLRequest(event.currentTarget.data), "_blank");
+		}
+		
+	]]>
+</mx:Script>
+<mx:WipeDown id="wipeDown" duration="500" />
+<mx:Fade id="fadeIn" alphaFrom="0.0" alphaTo="1.0" duration="1000"/>
+
+</mx:VBox>
+

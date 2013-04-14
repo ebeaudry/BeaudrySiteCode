@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Image xmlns:mx="http://www.adobe.com/2006/mxml" width="240" height="240" 
+	showEffect="{fadeIn}" click="onClick(event)" scaleContent="true">
+<mx:Script>
+	<![CDATA[
+		import mx.core.IFlexDisplayObject;
+		import controller.ImagesController;
+		import mx.managers.PopUpManager;
+		import mx.events.CloseEvent;
+		private function onClick(event:MouseEvent):void
+		{
+			var imageViewer:SingleImageViewer = SingleImageViewer(PopUpManager.createPopUp(this.parentApplication as DisplayObject, SingleImageViewer, true));
+				imageViewer.pictureList = event.currentTarget.owner.owner.dataProvider;
+				imageViewer.currentPicture = event.currentTarget.owner.owner.selectedItem;
+				imageViewer.addEventListener(CloseEvent.CLOSE, popUpClose);
+		}
+		
+		private function popUpClose(event:CloseEvent):void
+		{
+			PopUpManager.removePopUp(event.currentTarget as IFlexDisplayObject);
+		}
+		
+	]]>
+</mx:Script>
+	<mx:Fade id="fadeIn" alphaFrom="0.0" alphaTo="1.0" duration="1000" />
+	<mx:Fade id="fadeOut" alphaFrom="1.0" alphaTo="0.0" duration="1000" />
+</mx:Image>

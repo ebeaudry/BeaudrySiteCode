@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" showCloseButton="true" 
+	effectEnd="endShow(event)" resizeEffect="{resizeMe}"
+	addedEffect="{wipeDown}" cornerRadius="20" close="onClose(event)" styleName="myTitleWindow" borderAlpha="1">
+	<mx:Style>
+		.myTitleWindow
+		{
+			roundedBottomCorners: true;			
+		}
+	</mx:Style>
+	<mx:Script>
+		<![CDATA[
+			import mx.containers.Accordion;
+			import mx.containers.HBox;
+			import mx.events.ResizeEvent;
+			import mx.graphics.ImageSnapshot;
+			import mx.effects.easing.Bounce;
+			import mx.controls.Image;
+			import mx.containers.Panel;
+			import mx.events.ItemClickEvent;
+			import mx.skins.halo.SwatchSkin;
+			import mx.skins.halo.HaloBorder;
+			import mx.skins.halo.TitleBackground;
+			import com.google.maps.MapMouseEvent;
+			import mx.managers.PopUpManager;
+			import mx.events.CloseEvent;
+					
+			import mx.controls.Text;
+			import beans.ExcursionBean;
+			import flash.net.navigateToURL;
+			import mx.controls.LinkButton;
+			import mx.controls.Label;
+			import mx.collections.ArrayCollection;
+			
+			private var _excursions:ArrayCollection = new ArrayCollection();
+			public static const CLOSE_WINDOW:String = "CLOSE_WINDOW";
+			
+			[Bindable]
+			private var _place:String;
+	
+			public function set place(value:String):void
+			{				
+				_place = value;
+			}
+			
+			public function get place():String
+			{
+				return _place;
+			}
+			
+			public function addLocation(loc:String):void
+			{
+				this.title = loc;			
+			}
+								
+			public function addExcursion(excursion:ExcursionBean):void
+			{
+				if((excursion.website == null || excursion.website == "") &&
+				   (excursion.photoSet == null || excursion.photoSet == ""))
+				{
+					var label:Label = new Label();
+					this.addChild(label);
+					label.setStyle('paddingTop', 8); 
+					label.setStyle('paddingBottom', 8); 
+					label.visible = false;
+					label.text = excursion.when;
+				}
+				else
+				{
+					if(excursion.photoSet != null && excursion.photoSet != "")
+					{
+						var photoLabelLink:LinkButton = new LinkButton();
+						this.addChild(photoLabelLink);
+						photoLabelLink.setStyle('paddingTop', 8); 
+						photoLabelLink.setStyle('paddingBottom', 8);
+						photoLabelLink.label = excursion.when;
+						photoLabelLink.visible = false;
+						var imageList:BeaudryImages = new BeaudryImages();
+						imageList.linkName = excursion.when;
+						imageList.pictureListURL = excursion.photoSet;
+						imageList.visible = false;
+						imageList.includeInLayout = false;
+						imageList.setStyle('showEffect', fadeIn);
+						photoLabelLink.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void
+						{
+							imageList.visible = !imageList.visible;
+							imageList.includeInLayout = !imageList.includeInLayout;
+						});
+						this.addChild(imageList);						
+					}
+					if(excursion.website != null && excursion.website != "")
+					{
+						var labelLink:LinkButton = new LinkButton();
+						this.addChild(labelLink);
+						labelLink.setStyle('paddingTop', 8); 
+						labelLink.setStyle('paddingBottom', 8);
+						labelLink.label = excursion.when  + " (edandlauren.com)";
+						labelLink.visible = false;			
+						labelLink.data = excursion.website;		
+						labelLink.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void
+						{
+							navigateToURL(new URLRequest(e.currentTarget.data), "_blank");
+						});
+					}
+				}	
+			} 		
+				
+			private function endShow(event:Event):void
+			{
+				for each( var dispObject:DisplayObject in this.getChildren())
+				{
+					if(dispObject is HBox)
+					{
+
+					}
+					else
+					{	
+						dispObject.visible = true;
+					}
+				}
+			}		
+			
+			private function onClose(event:CloseEvent):void
+			{
+				var e:Event = new Event(CLOSE_WINDOW);
+				dispatchEvent(e);
+			}
+						
+			private function begin(event:Event):void
+			{
+				this.minWidth = this.titleBar.width + 10;
+			}
+						
+		]]>
+	</mx:Script>
+<mx:WipeDown id="wipeDown" effectStart="begin(event)" duration="500" />
+<mx:Fade id="fadeIn" alphaFrom="0.0" alphaTo="1.0" duration="1000" />
+<mx:Fade id="fadeOut" alphaFrom="1.0" alphaTo="0.0" duration="1000" />
+<mx:Resize id="resizeMe" duration="500" />
+</mx:TitleWindow>

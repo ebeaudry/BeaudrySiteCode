@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ModuleLoader xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" url="modules/PictureViewer.swf">
+	<mx:Script>
+		<![CDATA[
+			override public function loadModule(url:String=null, bytes:ByteArray=null):void
+			{
+				
+			}
+		]]>
+	</mx:Script>
+</mx:ModuleLoader>

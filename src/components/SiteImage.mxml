@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import beans.FlickrPicture;
+			import mx.controls.Image;
+						
+			[Bindable]
+			public var duration:Number;
+			
+			private var _currentPicture:FlickrPicture;
+			
+			public function get currentPicture():FlickrPicture
+			{
+				return _currentPicture;
+			}
+			
+			public function set currentPicture(value:FlickrPicture):void
+			{
+				_currentPicture = value;
+				setPic(value);
+			}
+			public function setPic(value:FlickrPicture):void
+			{
+				if(this.imagePanel1.visible && this.picture1.source != value.link)
+				{
+					progress.source = picture2;
+					progress.visible = true;
+					this.picture2.load(value.link);					
+					this.imagePanel1.visible = false;
+					this.imagePanel2.visible = true;
+				}
+				else
+				{
+					progress.source = picture1;
+					progress.visible = true;
+					this.picture1.load(value.link);
+					this.imagePanel2.visible = false;
+					this.imagePanel1.visible = true;
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:Canvas>
+		<mx:Panel id="imagePanel1" showEffect="fadeIn" hideEffect="fadeOut">
+			<mx:Image id="picture1" cacheAsBitmap="true" complete="{progress.visible = false;}" />
+		</mx:Panel>
+		<mx:Panel id="imagePanel2" showEffect="fadeIn" hideEffect="fadeOut">
+			<mx:Image id="picture2" cacheAsBitmap="true" complete="{progress.visible = false;}" />						
+		</mx:Panel>
+	</mx:Canvas>
+	<mx:ProgressBar id="progress" hideEffect="fadeOut" horizontalCenter="0" bottom="10"/>
+	<mx:Fade id="fadeIn" alphaFrom="0.0" alphaTo="1.0" duration="{duration}" effectEnd="{dispatchEvent(new Event('NewPicLoaded'));}" />
+	<mx:Fade id="fadeOut" alphaFrom="1.0" alphaTo="0.0" duration="{duration}" />
+</mx:VBox>
